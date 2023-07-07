@@ -17,6 +17,4 @@ const pool = createPool({
     database:DB_DATABASE
    })
 
-
-
 export default pool

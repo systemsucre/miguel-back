@@ -1,8 +1,8 @@
 import { Router } from "express"
-import { Admin } from "../modelo/admin.js"
+import { Plus } from "../modelo/plus.js"
 
 const rutas = Router()
-const admin = new Admin()
+const plus = new Plus()
 
 
 rutas.post("/sig", async (req, res) => {
@@ -10,7 +10,7 @@ rutas.post("/sig", async (req, res) => {
 
     let id = req.body.id
     try {
-        const resultado = await admin.listarSiguiente(id)
+        const resultado = await plus.listarSiguiente(id)
         if (resultado.length > 0)
             return res.json({ ok: true, data: resultado })
         else
@@ -25,7 +25,7 @@ rutas.post("/sig", async (req, res) => {
 rutas.post("/ant", async (req, res) => {
     let id = req.body.id
     try {
-        const resultado = await admin.listarAnterior(id)
+        const resultado = await plus.listarAnterior(id)
         if (resultado.length > 0)
             return res.json({ ok: true, data: resultado })
         else
@@ -39,7 +39,7 @@ rutas.post("/ant", async (req, res) => {
 rutas.post("/all", async (req, res) => {
     // console.log(req.body, 'controlador listar contactos')
     try {
-        const resultado = await admin.listar()
+        const resultado = await plus.listar()
         return res.json({ data: resultado, ok: true })
     } catch (error) {
         console.log(error)
@@ -53,7 +53,7 @@ rutas.post("/all", async (req, res) => {
 rutas.post("/buscar", async (req, res) => {
     const dato = req.body.dato
     try {
-        const resultado = await admin.buscar(dato)
+        const resultado = await plus.buscar(dato)
         return res.json({ data: resultado, ok: true })
     } catch (error) {
         // console.log(error)
@@ -66,13 +66,13 @@ rutas.post("/buscar", async (req, res) => {
 
 
 rutas.post("/eliminar", async (req, res) => {
-    // console.log(req.body)
+    const { id, numero, email } = req.body
+    const datos = { id, email, numero }
     try {
-        const number = req.body.numero;
-        const resultado = await admin.eliminar(number)
-        if (resultado.affectedRows === 0)
-            return res.json({ msg: "No existe el registro", ok: false });
-        return res.json({ ok: true, data: resultado, msg: 'El registro se ha eliminado' })
+        const resultado = await plus.eliminar(datos)
+        if (resultado.existe === 1)
+            return res.json({ msg: "El contacto no se ha eliminado", ok: false });
+        return res.json({ ok: true, data: resultado, msg: 'El Contacto se ha eliminado' })
     } catch (error) {
         console.log(error)
         return res.json({ ok: false, msg: 'Error en el Servidor' })
